@@ -1,25 +1,24 @@
 {
-  "name": "message-board",
+  "name": "chat-messages",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
-  "dependencies": {
-    "mongodb": "^2.2.33",
-    "socket.io": "^2.0.4"
-  },
-  "devDependencies": {},
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "dependencies": {
+    "mongodb": "^2.2.33",
+    "socket.io": "^2.0.4"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jcolairo/message-board.git"
+    "url": "git+https://github.com/jcolairo/chat-messages.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jcolairo/message-board/issues"
+    "url": "https://github.com/jcolairo/chat-messages/issues"
   },
-  "homepage": "https://github.com/jcolairo/message-board#readme"
+  "homepage": "https://github.com/jcolairo/chat-messages#readme"
 }
