@@ -7,6 +7,8 @@
 
   <link type="text/css" rel="stylesheet" href="css/main.css" />
 
+  <!-- <script src="message.js" charset="utf-8"></script> -->
+
   <title>Message Board</title>
 </head>
 <body>
@@ -21,5 +23,67 @@
       Status: <span>Idle</span>
     </div>
   </div>
+
+  <script type="text/javascript">
+  (function() {
+    const getNode = function(s) {
+        return document.querySelector(s);
+      },
+    //  Get required nodes
+    status = getNode('.chat-status span')
+    textarea = getNode('.chat-textarea');
+    chatName = getNode('.chat-name');
+
+    statusDefault = status.textContent;
+
+    setStatus = (s) => {
+      status.textContent = s;
+
+      if (s !== statusDefault) {
+        const delay = setTimeout(() => {
+          setStatus(statusDefault);
+          clearInterval(delay);
+        }, 3000);
+      }
+    }
+
+    try {
+      var socket = io.connect('http://127.0.0.1:8080');
+    } catch(err) {
+      // Set status to warn user
+    }
+
+    if(socket !== undefined) {
+
+      // Listen for a status
+      socket.on('status', (data) => {
+        setStatus((typeof data === 'object') ? data.message : data);
+
+        if (data.clear === true) {
+          textarea.value = '';
+        }
+      });
+
+      // Listen for keydown
+      textarea.addEventListener('keydown', function(event) {
+        const self = this;
+        const name = chatName.value;
+
+        if(event.which === 13 && event.shiftKey === false) {
+          socket.emit('input', {
+            name,
+            message: self.value
+          });
+
+          event.preventDefault();
+        }
+      });
+    }
+  })();
+
+
+
+  </script>
+
 </body>
 </html>
