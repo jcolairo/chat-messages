@@ -21,5 +21,84 @@
       Status: <span>Idle</span>
     </div>
   </div>
+
+  <script type="text/javascript">
+  (function() {
+    const getNode = function(s) {
+        return document.querySelector(s);
+      },
+    //  Get required nodes
+    status = getNode('.chat-status span');
+    messages = getNode('.chat-messages');
+    textarea = getNode('.chat-textarea');
+    chatName = getNode('.chat-name');
+
+    statusDefault = status.textContent;
+
+    setStatus = (s) => {
+      status.textContent = s;
+
+      if (s !== statusDefault) {
+        const delay = setTimeout(() => {
+          setStatus(statusDefault);
+          clearInterval(delay);
+        }, 3000);
+      }
+    }
+
+    try {
+      var socket = io.connect('http://127.0.0.1:8080');
+    } catch(err) {
+      // Set status to warn user
+    }
+
+    if(socket !== undefined) {
+
+      //  Listen for output
+      socket.on('output', (data) => {
+        if(data.length) {
+          //  loop through results
+          for(let i = 0; i < data.length; i = i + 1) {
+            let message = document.createElement('div');
+            message.setAttribute('class', 'chat-message');
+            message.textContent = data[i].name + ': ' + data[i].message;
+
+            // Append
+            messages.appendChild(message);
+            messages.insertBefore(message, messages.lastChild);
+          }
+        }
+      });
+
+      // Listen for a status
+      socket.on('status', (data) => {
+        setStatus((typeof data === 'object') ? data.message : data);
+
+        if (data.clear === true) {
+          textarea.value = '';
+        }
+      });
+
+      // Listen for keydown
+      textarea.addEventListener('keydown', function(event) {
+        const self = this;
+        const name = chatName.value;
+
+        if(event.which === 13 && event.shiftKey === false) {
+          socket.emit('input', {
+            name,
+            message: self.value
+          });
+
+          event.preventDefault();
+        }
+      });
+    }
+  })();
+
+
+
+  </script>
+
 </body>
 </html>
